@@ -1,3 +1,7 @@
+// Definición de variables globales
+let attributesCell; // Declaración global única para attributesCell
+
+// Función para buscar detalles de un producto por su ID
 async function buscarProducto(itemId) {
     try {
         const response = await fetch(`https://api.mercadolibre.com/items/${itemId}`);
@@ -9,9 +13,21 @@ async function buscarProducto(itemId) {
     }
 }
 
+// Función para obtener la descripción de un producto por su ID
+async function obtenerDescripcionProducto(itemId) {
+    try {
+        const response = await fetch(`https://api.mercadolibre.com/items/${itemId}/description`);
+        const data = await response.json();
+        return data.plain_text; // Devolvemos solo el texto plano de la descripción
+    } catch (error) {
+        console.error('Error al obtener la descripción del producto:', error);
+        return null;
+    }
+}
+
+// Función para mostrar los detalles de un producto en una tabla
 function mostrarProducto(data, container) {
     const row = container.insertRow();
-
     const idCell = row.insertCell();
     const imageCell = row.insertCell();
     const titleCell = row.insertCell();
@@ -26,7 +42,7 @@ function mostrarProducto(data, container) {
     const statusCell = row.insertCell();
     const shippingModeCell = row.insertCell();
     const permalinkCell = row.insertCell();
-    const attributesCell = row.insertCell(); // Nueva celda para los atributos
+    attributesCell = row.insertCell(); // Asignamos a la variable global attributesCell
 
     idCell.textContent = data.id;
     imageCell.innerHTML = `<img src="${data.thumbnail}" alt="${data.title}">`;
@@ -45,9 +61,9 @@ function mostrarProducto(data, container) {
 
     listingTypeIdCell.textContent = data.listing_type_id || "-";
     conditionCell.textContent = data.condition || "-";
-    freeShippingCell.textContent = data.shipping.free_shipping ? "Sí" : "No";
+    freeShippingCell.textContent = data.shipping && data.shipping.free_shipping ? "Sí" : "No";
     statusCell.textContent = data.status || "-";
-    shippingModeCell.textContent = data.shipping.mode || "-";
+    shippingModeCell.textContent = data.shipping && data.shipping.mode ? data.shipping.mode : "-";
 
     const link = document.createElement('a');
     link.href = data.permalink;
@@ -55,19 +71,85 @@ function mostrarProducto(data, container) {
     link.target = '_blank';
     permalinkCell.appendChild(link);
 
-    // Crear el botón de atributos
+    // Celda para el botón "Ver Descripción"
+    const descriptionCell = row.insertCell();
+    const descriptionButton = document.createElement('button');
+    descriptionButton.textContent = 'Ver Descripción';
+    descriptionButton.classList.add('btn', 'btn-info', 'description-button');
+    descriptionButton.addEventListener('click', () => mostrarDescripcion(data.id));
+    descriptionCell.appendChild(descriptionButton);
+
+    // Celda para el botón "Ver Atributos"
     const attributesButton = document.createElement('button');
-    attributesButton.textContent = 'Atributos';
-    attributesButton.className = 'btn btn-info';
-    attributesButton.onclick = () => abrirAtributos(data.id);
+    attributesButton.textContent = 'Ver Atributos';
+    attributesButton.classList.add('btn', 'btn-primary', 'attributes-button');
+    attributesButton.addEventListener('click', () => mostrarAtributos(data.id));
     attributesCell.appendChild(attributesButton);
 }
 
-function abrirAtributos(mla) {
-    const url = `https://api.mercadolibre.com/items/${mla}?include_attributes=all#json`;
-    window.open(url, '_blank');
+// Función para mostrar la descripción de un producto en un modal
+async function mostrarDescripcion(itemId) {
+    const descripcion = await obtenerDescripcionProducto(itemId);
+
+    const modal = document.createElement('div');
+    modal.classList.add('modal', 'fade');
+    modal.innerHTML = `
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Descripción del Producto</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    ${descripcion} 
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    $(modal).modal('show');
 }
 
+// Función para mostrar los atributos de un producto en un modal
+async function mostrarAtributos(itemId) {
+    try {
+        const response = await fetch(`https://api.mercadolibre.com/items/${itemId}?include_attributes=all`);
+        const data = await response.json();
+
+        const modal = document.createElement('div');
+        modal.classList.add('modal', 'fade');
+        modal.innerHTML = `
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Atributos del Producto</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <h3>Atributos:</h3>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Agrega cada atributo como un párrafo en el modal body
+        const modalBody = modal.querySelector('.modal-body');
+        data.attributes.forEach(attr => {
+            const attributeElement = document.createElement('p');
+            attributeElement.innerHTML = `<strong>${attr.name}:</strong> ${attr.value_name}`;
+            modalBody.appendChild(attributeElement);
+        });
+
+        document.body.appendChild(modal);
+        $(modal).modal('show');
+    } catch (error) {
+        console.error('Error al obtener los atributos del producto:', error);
+    }
+}
+
+
+// Evento para procesar archivos al cargar un archivo CSV, XLS o XLSX
 async function procesarArchivo() {
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
@@ -75,7 +157,7 @@ async function procesarArchivo() {
     const loadingIndicator = document.getElementById('loading-indicator');
 
     if (file) {
-        // Actualizar el texto de la etiqueta del archivo
+        // Actualiza el texto de la etiqueta del archivo
         fileInput.nextElementSibling.textContent = file.name;
 
         itemDetailsContainer.innerHTML = '';
@@ -91,63 +173,46 @@ async function procesarArchivo() {
                 rows = XLSX.utils.sheet_to_csv(worksheet).split('\n');
             }
 
-            // Contador de MLAs cargados
-            let mlaCount = 0;
+            // Contador para productos cargados exitosamente
+            let productCount = 0;
 
-            // Mostrar indicador de carga
+            // Muestra el indicador de carga
             loadingIndicator.style.display = 'block';
 
+            // Itera sobre las filas del archivo para obtener y mostrar detalles de productos
             for (const row of rows) {
                 const itemId = row.trim();
                 if (itemId) {
                     const itemData = await buscarProducto(itemId);
                     if (itemData) {
                         mostrarProducto(itemData, itemDetailsContainer);
-                        mlaCount++; // Incrementar el contador
+                        productCount++; // Incrementa el contador de productos cargados
                     }
                 }
             }
 
-            // Ocultar indicador de carga
+            // Oculta el indicador de carga después de cargar todos los productos
             loadingIndicator.style.display = 'none';
 
-            // Actualizar el contador después de cargar todos los MLAs
-            actualizarContadorMLAs(mlaCount);
+            // Actualiza el contador de productos cargados
+            actualizarContadorProductos(productCount);
 
-            // Agregar eventos de filtrado
-            const searchButtons = document.querySelectorAll('.search-button');
-
-            searchButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const filterText = button.parentNode.querySelector('.filter').value.toLowerCase();
-                    const column = button.dataset.column;
-
-                    const rows = itemDetailsContainer.getElementsByTagName('tr');
-                    let visibleCount = 0; // Contador de filas visibles
-                    for (const row of rows) {
-                        const cell = row.getElementsByTagName('td')[column];
-                        if (cell) {
-                            const cellText = cell.textContent.toLowerCase();
-                            row.style.display = (cellText.includes(filterText) && row.style.display !== 'none') ? '' : 'none';
-                            if (row.style.display !== 'none') {
-                                visibleCount++;
-                            }
-                        }
-                    }
-                    actualizarContadorMLAs(visibleCount); // Actualizar contador después de filtrar
-                });
-            });
+            // Agrega eventos de filtrado después de cargar los productos
+            agregarEventosDeFiltrado();
         };
+
+        // Lee el contenido del archivo como texto binario
         reader.readAsBinaryString(file);
     }
 }
 
-// Función para actualizar el contador de MLAs
-function actualizarContadorMLAs(count) {
-    const mlaCountSpan = document.getElementById('mla-count');
-    mlaCountSpan.textContent = `MLAs: ${count}`;
+// Función para actualizar el contador de productos mostrados
+function actualizarContadorProductos(count) {
+    const productCountSpan = document.getElementById('product-count');
+    productCountSpan.textContent = `Productos: ${count}`;
 }
 
+// Función para exportar los detalles de productos a un archivo XLSX descargable
 function exportarXLS() {
     const table = document.getElementById('item-details');
     const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet JS" });
@@ -167,3 +232,34 @@ function exportarXLS() {
     link.click();
 }
 
+// Agrega eventos de filtrado a los botones de búsqueda
+function agregarEventosDeFiltrado() {
+    const searchButtons = document.querySelectorAll('.search-button');
+
+    searchButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const filterText = button.parentNode.querySelector('.filter').value.toLowerCase();
+            const column = button.dataset.column;
+
+            const itemDetailsContainer = document.getElementById('item-details').getElementsByTagName('tbody')[0];
+            const rows = itemDetailsContainer.getElementsByTagName('tr');
+            let visibleCount = 0; // Contador de filas visibles
+            for (const row of rows) {
+                const cell = row.getElementsByTagName('td')[column];
+                if (cell) {
+                    const cellText = cell.textContent.toLowerCase();
+                    row.style.display = (cellText.includes(filterText) && row.style.display !== 'none') ? '' : 'none';
+                    if (row.style.display !== 'none') {
+                        visibleCount++;
+                    }
+                }
+            }
+            actualizarContadorProductos(visibleCount); // Actualiza el contador después de filtrar
+        });
+    });
+}
+
+// Evento para cargar eventos de filtrado y procesar archivos al cargar el documento HTML
+document.addEventListener('DOMContentLoaded', () => {
+    agregarEventosDeFiltrado();
+});

@@ -6,7 +6,7 @@
     <title>MercadoLibre</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script> <!-- Font Awesome for spinner -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script> 
 </head>
 <body>
     <div class="container">
@@ -19,7 +19,7 @@
                     <label class="custom-file-label" for="fileInput">Seleccionar archivo</label>
                 </div>
                 <div class="mla-count-container">
-                    <span id="mla-count">MLAs: 0</span>
+                    <span id="product-count">Productos: 0</span> 
                 </div>
                 <div class="input-group-append">
                     <button onclick="procesarArchivo()" class="btn btn-primary">Procesar Archivo</button>
@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        <div id="loading-indicator">
+        <div id="loading-indicator" style="display: none;">
             <i class="fas fa-spinner fa-spin"></i> Cargando...
         </div>
 
@@ -39,7 +39,7 @@
                     <th>Imagen</th>
                     <th>Título</th>
                     <th>Precio</th>
-                    <th>Precio Base</th>
+                    <th>Precio</th>
                     <th>GTIN</th>
                     <th>Marca</th>
                     <th>SKU</th>
@@ -49,13 +49,14 @@
                     <th>Estado</th>
                     <th>Modo Envío</th>
                     <th>Link</th>
-                    <th>Atributos</th> <!-- Nueva columna para los atributos -->
+                    <th>Atributos</th> 
+                    <th>descripción</th> 
                 </tr>
                 <tr class="filter-row">
                     <th><div class="filter-container"><input type="text" class="filter" data-column="0"><button class="btn btn-sm btn-secondary search-button" data-column="0">Buscar</button></div></th>
                     <th></th>
                     <th><div class="filter-container"><input type="text" class="filter" data-column="2"><button class="btn btn-sm btn-secondary search-button" data-column="2">Buscar</button></div></th>
-                    <th><div class="filter-container"><input type="text" class="filter" data-column="3"><button class="btn btn-sm btn-secondary search-button" data-column="3">Buscar</button></div></th>
+                     <th><div class="filter-container"><input type="text" class="filter" data-column="3"><button class="btn btn-sm btn-secondary search-button" data-column="3">Buscar</button></div></th>
                     <th><div class="filter-container"><input type="text" class="filter" data-column="4"><button class="btn btn-sm btn-secondary search-button" data-column="4">Buscar</button></div></th>
                     <th><div class="filter-container"><input type="text" class="filter" data-column="5"><button class="btn btn-sm btn-secondary search-button" data-column="5">Buscar</button></div></th>
                     <th><div class="filter-container"><input type="text" class="filter" data-column="6"><button class="btn btn-sm btn-secondary search-button" data-column="6">Buscar</button></div></th>
@@ -64,17 +65,20 @@
                     <th><div class="filter-container"><input type="text" class="filter" data-column="9"><button class="btn btn-sm btn-secondary search-button" data-column="9">Buscar</button></div></th>
                     <th><div class="filter-container"><input type="text" class="filter" data-column="10"><button class="btn btn-sm btn-secondary search-button" data-column="10">Buscar</button></div></th>
                     <th><div class="filter-container"><input type="text" class="filter" data-column="11"><button class="btn btn-sm btn-secondary search-button" data-column="11">Buscar</button></div></th>
-                    <th><div class="filter-container"><input type="text" class="filter" data-column="12"><button class="btn btn-sm btn-secondary search-button" data-column="12">Buscar</button></div></th>
+                    <th><div class="filter-container"><input type="text" class="filter" data-column="11"><button class="btn btn-sm btn-secondary search-button" data-column="12">Buscar</button></div></th>
                     <th></th>
-                    <th></th> <!-- Nueva columna para los filtros de atributos -->
-                </tr>
+                    <th></th>
+                    <th></th>
+                   </tr>
             </thead>
-            <tbody></tbody>
+            <tbody></tbody> 
         </table>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script> 
-    <script src="script.js"></script>
-    <script src="attributes.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    <script src="script.js"></script> 
 </body>
 </html>
-
