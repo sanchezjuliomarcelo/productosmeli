@@ -50,9 +50,9 @@ th {
 .mla-count-container {
     background-color: #f0f0f0;
     border: 1px solid #ccc;
-    padding: 10px;
+    padding: 5px 10px 1px 10px;
     border-radius: 5px;
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
 /* Estilos para el indicador de carga */
@@ -91,7 +91,3 @@ th {
         max-width: 80px;
     }
 }
-
-/* Estilos para el contenido del modal */
-.modal-body {
-    
