@@ -28,11 +28,13 @@ async function obtenerDescripcionProducto(itemId) {
 // Función para mostrar los detalles de un producto en una tabla
 function mostrarProducto(data, container) {
     const row = container.insertRow();
+
+    // Insertar celdas necesarias
     const idCell = row.insertCell();
     const imageCell = row.insertCell();
     const titleCell = row.insertCell();
     const priceCell = row.insertCell();
-    const basePriceCell = row.insertCell();
+    const catalogProductIdCell = row.insertCell(); // Nueva celda para catalog_product_id
     const gtinCell = row.insertCell();
     const brandCell = row.insertCell();
     const skuCell = row.insertCell();
@@ -42,13 +44,19 @@ function mostrarProducto(data, container) {
     const statusCell = row.insertCell();
     const shippingModeCell = row.insertCell();
     const permalinkCell = row.insertCell();
-    attributesCell = row.insertCell(); // Asignamos a la variable global attributesCell
+    const descriptionCell = row.insertCell();
+    const attributesCell = row.insertCell(); // Asignamos a la variable global attributesCell
 
+    // Llenar las celdas con los datos del producto
     idCell.textContent = data.id;
     imageCell.innerHTML = `<img src="${data.thumbnail}" alt="${data.title}">`;
     titleCell.textContent = data.title;
     priceCell.textContent = `$${data.price}`;
-    basePriceCell.textContent = `$${data.base_price}`;
+
+    // Mostrar el catalog_product_id si está definido
+    if (data.catalog_product_id) {
+        catalogProductIdCell.textContent = data.catalog_product_id;
+    }
 
     const gtinAttribute = data.attributes.find(attr => attr.id === "GTIN");
     gtinCell.textContent = gtinAttribute ? gtinAttribute.value_name : "-";
@@ -71,15 +79,14 @@ function mostrarProducto(data, container) {
     link.target = '_blank';
     permalinkCell.appendChild(link);
 
-    // Celda para el botón "Ver Descripción"
-    const descriptionCell = row.insertCell();
+    // Botón "Ver Descripción"
     const descriptionButton = document.createElement('button');
     descriptionButton.textContent = 'Ver Descripción';
     descriptionButton.classList.add('btn', 'btn-info', 'description-button');
     descriptionButton.addEventListener('click', () => mostrarDescripcion(data.id));
     descriptionCell.appendChild(descriptionButton);
 
-    // Celda para el botón "Ver Atributos"
+    // Botón "Ver Atributos"
     const attributesButton = document.createElement('button');
     attributesButton.textContent = 'Ver Atributos';
     attributesButton.classList.add('btn', 'btn-primary', 'attributes-button');

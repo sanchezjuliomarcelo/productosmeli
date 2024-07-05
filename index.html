@@ -1,88 +1,216 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MercadoLibre</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script> 
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="assets/favicom.png" type="image/x-icon">
+    <title>Productos MELI</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+  </head>
+
+  <body>
     <div class="container">
-        <h1>Listado de Productos de MercadoLibre</h1>
+      <h1>Listado de Productos de MercadoLibre</h1>
 
-        <div class="form-group">
-            <div class="input-group">
-                <div class="custom-file">
-                    <input type="file" id="fileInput" accept=".csv, .xls, .xlsx" class="custom-file-input">
-                    <label class="custom-file-label" for="fileInput">Seleccionar archivo</label>
-                    <span id="product-count">Productos: 0</span> 
-                </div>
-                
-                <div class="input-group">
-                    <button onclick="procesarArchivo()" class="btn btn-primary">Procesar Archivo</button>
-                    <button onclick="exportarXLS()" class="btn btn-success">Exportar a XLS</button>
-                    <button id="buscarMLA" class="btn btn-primary">Buscar MLA</button>
-                    <input type="text" id="mlaInput" class="form-control" placeholder="Ingrese un MLA...">
-                    <div class="mla-count-container">
-                        <span id="product-count">Productos: 0</span> 
-                    </div>
-                </div>
+      <div class="form-group">
+        <div class="input-group">
+          <div class="custom-file">
+            <input
+              type="file"
+              id="fileInput"
+              accept=".csv, .xls, .xlsx"
+              class="custom-file-input"
+            />
+            <label class="custom-file-label" for="fileInput"
+              >Seleccionar archivo</label
+            >
+            <span id="product-count">Productos: 0</span>
+          </div>
+
+          <div class="input-group">
+            <button onclick="procesarArchivo()" class="btn btn-primary">
+              Procesar Archivo
+            </button>
+            <button onclick="exportarXLS()" class="btn btn-success">
+              Exportar a XLS
+            </button>
+            <button id="buscarMLA" class="btn btn-primary">Buscar MLA</button>
+            <input
+              type="text"
+              id="mlaInput"
+              class="form-control"
+              placeholder="Ingrese un MLA..."
+            />
+            <div class="mla-count-container">
+              <span id="product-count">Productos: 0</span>
             </div>
-         </div>
-
-        <div id="loading-indicator" style="display: none;">
-            <i class="fas fa-spinner fa-spin"></i> Cargando...
+          </div>
         </div>
+      </div>
 
-        <table id="item-details" class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Imagen</th>
-                    <th>Título</th>
-                    <th>Precio</th>
-                    <th>Precio</th>
-                    <th>GTIN</th>
-                    <th>Marca</th>
-                    <th>SKU</th>
-                    <th>Publicación</th>
-                    <th>Condición</th>
-                    <th>Envío Gratis</th>
-                    <th>Estado</th>
-                    <th>Modo Envío</th>
-                    <th>Link</th>
-                    <th>Atributos</th> 
-                    <th>descripción</th> 
-                </tr>
-                <tr class="filter-row">
-                    <th><div class="filter-container"><input type="text" class="filter" data-column="0"><button class="btn btn-sm btn-secondary search-button" data-column="0">Buscar</button></div></th>
-                    <th></th>
-                    <th><div class="filter-container"><input type="text" class="filter" data-column="2"><button class="btn btn-sm btn-secondary search-button" data-column="2">Buscar</button></div></th>
-                     <th><div class="filter-container"><input type="text" class="filter" data-column="3"><button class="btn btn-sm btn-secondary search-button" data-column="3">Buscar</button></div></th>
-                    <th><div class="filter-container"><input type="text" class="filter" data-column="4"><button class="btn btn-sm btn-secondary search-button" data-column="4">Buscar</button></div></th>
-                    <th><div class="filter-container"><input type="text" class="filter" data-column="5"><button class="btn btn-sm btn-secondary search-button" data-column="5">Buscar</button></div></th>
-                    <th><div class="filter-container"><input type="text" class="filter" data-column="6"><button class="btn btn-sm btn-secondary search-button" data-column="6">Buscar</button></div></th>
-                    <th><div class="filter-container"><input type="text" class="filter" data-column="7"><button class="btn btn-sm btn-secondary search-button" data-column="7">Buscar</button></div></th>
-                    <th><div class="filter-container"><input type="text" class="filter" data-column="8"><button class="btn btn-sm btn-secondary search-button" data-column="8">Buscar</button></div></th>
-                    <th><div class="filter-container"><input type="text" class="filter" data-column="9"><button class="btn btn-sm btn-secondary search-button" data-column="9">Buscar</button></div></th>
-                    <th><div class="filter-container"><input type="text" class="filter" data-column="10"><button class="btn btn-sm btn-secondary search-button" data-column="10">Buscar</button></div></th>
-                    <th><div class="filter-container"><input type="text" class="filter" data-column="11"><button class="btn btn-sm btn-secondary search-button" data-column="11">Buscar</button></div></th>
-                    <th><div class="filter-container"><input type="text" class="filter" data-column="11"><button class="btn btn-sm btn-secondary search-button" data-column="12">Buscar</button></div></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                   </tr>
-            </thead>
-            <tbody></tbody> 
-        </table>
+      <div id="loading-indicator" style="display: none">
+        <i class="fas fa-spinner fa-spin"></i> Cargando...
+      </div>
+
+      <table id="item-details" class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Imagen</th>
+            <th>Título</th>
+            <th>Precio</th>
+            <th>Catálogo</th>
+            <th>GTIN</th>
+            <th>Marca</th>
+            <th>SKU</th>
+            <th>Publicación</th>
+            <th>Condición</th>
+            <th>Envío Gratis</th>
+            <th>Estado</th>
+            <th>Modo Envío</th>
+            <th>Link</th>
+            <th>Atributos</th>
+            <th>descripción</th>
+          </tr>
+          <tr class="filter-row">
+            <th>
+              <div class="filter-container">
+                <input type="text" class="filter" data-column="0" /><button
+                  class="btn btn-sm btn-secondary search-button"
+                  data-column="0"
+                >
+                  Buscar
+                </button>
+              </div>
+            </th>
+            <th></th>
+            <th>
+              <div class="filter-container">
+                <input type="text" class="filter" data-column="2" /><button
+                  class="btn btn-sm btn-secondary search-button"
+                  data-column="2"
+                >
+                  Buscar
+                </button>
+              </div>
+            </th>
+            <th>
+              <div class="filter-container">
+                <input type="text" class="filter" data-column="3" /><button
+                  class="btn btn-sm btn-secondary search-button"
+                  data-column="3"
+                >
+                  Buscar
+                </button>
+              </div>
+            </th>
+            <th>
+              <div class="filter-container">
+                <input type="text" class="filter" data-column="4" /><button
+                  class="btn btn-sm btn-secondary search-button"
+                  data-column="4"
+                >
+                  Buscar
+                </button>
+              </div>
+            </th>
+            <th>
+              <div class="filter-container">
+                <input type="text" class="filter" data-column="5" /><button
+                  class="btn btn-sm btn-secondary search-button"
+                  data-column="5"
+                >
+                  Buscar
+                </button>
+              </div>
+            </th>
+            <th>
+              <div class="filter-container">
+                <input type="text" class="filter" data-column="6" /><button
+                  class="btn btn-sm btn-secondary search-button"
+                  data-column="6"
+                >
+                  Buscar
+                </button>
+              </div>
+            </th>
+            <th>
+              <div class="filter-container">
+                <input type="text" class="filter" data-column="7" /><button
+                  class="btn btn-sm btn-secondary search-button"
+                  data-column="7"
+                >
+                  Buscar
+                </button>
+              </div>
+            </th>
+            <th>
+              <div class="filter-container">
+                <input type="text" class="filter" data-column="8" /><button
+                  class="btn btn-sm btn-secondary search-button"
+                  data-column="8"
+                >
+                  Buscar
+                </button>
+              </div>
+            </th>
+            <th>
+              <div class="filter-container">
+                <input type="text" class="filter" data-column="9" /><button
+                  class="btn btn-sm btn-secondary search-button"
+                  data-column="9"
+                >
+                  Buscar
+                </button>
+              </div>
+            </th>
+            <th>
+              <div class="filter-container">
+                <input type="text" class="filter" data-column="10" /><button
+                  class="btn btn-sm btn-secondary search-button"
+                  data-column="10"
+                >
+                  Buscar
+                </button>
+              </div>
+            </th>
+            <th>
+              <div class="filter-container">
+                <input type="text" class="filter" data-column="11" /><button
+                  class="btn btn-sm btn-secondary search-button"
+                  data-column="11"
+                >
+                  Buscar
+                </button>
+              </div>
+            </th>
+            <th>
+              <div class="filter-container">
+                <input type="text" class="filter" data-column="11" /><button
+                  class="btn btn-sm btn-secondary search-button"
+                  data-column="12"
+                >
+                  Buscar
+                </button>
+              </div>
+            </th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
-    <script src="script.js"></script> 
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
