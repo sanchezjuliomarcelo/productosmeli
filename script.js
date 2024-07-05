@@ -263,3 +263,46 @@ function agregarEventosDeFiltrado() {
 document.addEventListener('DOMContentLoaded', () => {
     agregarEventosDeFiltrado();
 });
+
+
+// Asociar evento de click al botón de buscar MLA
+document.getElementById('buscarMLA').addEventListener('click', async function() {
+    const mla = document.getElementById('mlaInput').value.trim(); // Obtener valor del MLA y limpiar espacios
+    if (mla) {
+        const itemDetailsContainer = document.getElementById('item-details').getElementsByTagName('tbody')[0];
+        const loadingIndicator = document.getElementById('loading-indicator');
+
+        // Mostrar carga
+        itemDetailsContainer.innerHTML = '';
+        loadingIndicator.style.display = 'block';
+
+        try {
+            const itemData = await buscarProducto(mla); // Llamar a función para buscar por MLA
+            if (itemData) {
+                mostrarProducto(itemData, itemDetailsContainer);
+            } else {
+                console.error('No se encontró ningún producto con ese MLA.');
+            }
+        } catch (error) {
+            console.error('Error al buscar producto:', error);
+        } finally {
+            // Ocultar carga
+            loadingIndicator.style.display = 'none';
+        }
+    } else {
+        console.error('Ingrese un MLA válido.');
+    }
+});
+
+// Función para buscar producto por MLA (simulación)
+async function buscarProducto(mla) {
+    // Aquí deberías implementar la lógica para buscar por MLA, ya sea mediante una API o datos locales
+    // Este ejemplo es una simulación
+    const response = await fetch(`https://api.mercadolibre.com/items/${mla}`);
+    if (response.ok) {
+        const data = await response.json();
+        return data;
+    } else {
+        throw new Error('Producto no encontrado');
+    }
+}
